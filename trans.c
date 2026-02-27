@@ -108,11 +108,13 @@ void updateRecord(FILE *fPtr)
     // obtain number of account to update
     printf("%s", "Enter account to update ( 1 - 100 ): ");
     scanf("%d", &account);
+
     if (account < 1 || account > 100)
     {
     printf("Invalid account number. Please enter between 1 and 100.\n");
     return;
     }
+
 
 
     // move file pointer to correct record in file
@@ -137,7 +139,11 @@ void updateRecord(FILE *fPtr)
 
         // move file pointer to correct record in file
         // move back by 1 record length
+
         fseek(fPtr, -(long)sizeof(struct clientData), SEEK_CUR);
+
+        fseek(fPtr, -sizeof(struct clientData), SEEK_CUR);
+
         // write updated record over old record in file
         fwrite(&client, sizeof(struct clientData), 1, fPtr);
     } // end else
@@ -158,6 +164,7 @@ void deleteRecord(FILE *fPtr)
         printf("Invalid account number. Please enter between 1 and 100.\n");
         return;
     }
+
 
     // move file pointer to correct record in file
     fseek(fPtr, (accountNum - 1) * sizeof(struct clientData), SEEK_SET);

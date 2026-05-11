@@ -30,6 +30,7 @@ int main(int argc, char *argv[])
         printf("%s: File could not be opened.\n", argv[0]);
         exit(-1);
     }
+    printf("Welcome to Bank Management System\n");
 
     // enable user to specify action
     while ((choice = enterChoice()) != 5)
@@ -60,6 +61,8 @@ int main(int argc, char *argv[])
     }     // end while
 
     fclose(cfPtr); // fclose closes the file
+    printf("Thank you for using Bank Management System\n");
+    return 0;
 } // end main
 
 // create formatted text file for printing
@@ -88,12 +91,16 @@ void textFile(FILE *readPtr)
             // write single record to text file
             if (result != 0 && client.acctNum != 0)
             {
-                fprintf(writePtr, "%-6d%-16s%-11s%10.2f\n", client.acctNum, client.lastName, client.firstName,
-                        client.balance);
-            } // end if
-        }     // end while
+                fprintf(writePtr, "%-6d%-16s%-11s%10.2f\n",client.acctNum, client.lastName, client.firstName,client.balance);
+                printf("Account: %d\n", client.acctNum);
+                printf("Name: %s %s\n", client.firstName, client.lastName);
+                printf("Balance: %.2f\n\n", client.balance);
+            }
+        }
 
-        fclose(writePtr); // fclose closes the file
+        fclose(writePtr); 
+        // fclose closes the file
+        
     }                     // end else
 } // end function textFile
 
@@ -114,8 +121,6 @@ void updateRecord(FILE *fPtr)
     printf("Invalid account number. Please enter between 1 and 100.\n");
     return;
     }
-
-
 
     // move file pointer to correct record in file
     fseek(fPtr, (account - 1) * sizeof(struct clientData), SEEK_SET);
@@ -142,8 +147,7 @@ void updateRecord(FILE *fPtr)
 
         fseek(fPtr, -(long)sizeof(struct clientData), SEEK_CUR);
 
-        fseek(fPtr, -sizeof(struct clientData), SEEK_CUR);
-
+       
         // write updated record over old record in file
         fwrite(&client, sizeof(struct clientData), 1, fPtr);
     } // end else
@@ -199,12 +203,14 @@ void newRecord(FILE *fPtr)
     fseek(fPtr, (accountNum - 1) * sizeof(struct clientData), SEEK_SET);
     // read record from file
     fread(&client, sizeof(struct clientData), 1, fPtr);
+    if (accountNum < 1 || accountNum > 100)
+    {
+    printf("Invalid account number. Please enter between 1 and 100.\n");
+    return;
+    }
+
     // display error if account already exists
     if (client.acctNum != 0)
-    {
-        printf("Account #%d already contains information.\n", client.acctNum);
-    } // end if
-    else
     { // create record
         // user enters last name, first name and balance
         printf("%s", "Enter lastname, firstname, balance\n? ");
@@ -231,6 +237,10 @@ unsigned int enterChoice(void)
                  "4 - delete an account\n"
                  "5 - end program\n? ");
 
-    scanf("%u", &menuChoice); // receive choice from user
-    return menuChoice;
-} // end function enterChoice
+    scanf("%u", &menuChoice);// receive choice from user
+    if (menuChoice < 1 || menuChoice > 5)
+    {
+        printf("Invalid choice. Please enter a number between 1 and 5.\n");
+    }
+        return menuChoice;
+}// end function enterChoice
